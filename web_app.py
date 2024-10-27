@@ -33,11 +33,27 @@ def list_files():
         path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         if os.path.isfile(path) and allowed_file(filename):
             files.append(filename)
-    retstr = '<form action="/forward" method="post">\n'
+    
+    retstr = '''
+    <div class="container mx-auto p-6">
+        <h2 class="text-2xl font-bold mb-4">Select a Video File</h2>
+        <form action="/forward" method="post" class="space-y-2">
+    '''
+    
     for (i, filename) in enumerate(files):
-        retstr += f'\t<button name="Btn-{filename}" type="submit">{filename}</button>\n'
-    retstr += "</form>"
+        retstr += f'''
+        <button class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300" name="Btn-{filename}" type="submit">
+            {filename}
+        </button>
+        '''
+    
+    retstr += '''
+        </form>
+    </div>
+    '''
+    
     return retstr
+
 
 @app.route('/forward', methods=['GET', 'POST'])
 def use_video():
@@ -115,27 +131,27 @@ def gen_frames(video_name):
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
         file = request.files['file']
-        # If the user does not select a file, the browser submits an
-        # empty file without a filename.
         if file.filename == '':
             flash('No selected file')
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            # return redirect(url_for('download_file', name=filename))
+    
     return '''
-        <h1>Upload new File</h1>
-        <form method=post enctype=multipart/form-data>
-            <input type=file name=file>
-            <input type=submit value=Upload>
+    <div class="container mx-auto p-6">
+        <h1 class="text-2xl font-bold mb-4">Upload a New File</h1>
+        <form method=post enctype=multipart/form-data class="space-y-4">
+            <input class="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer" type="file" name="file">
+            <button class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300" type="submit">Upload</button>
         </form>
-        '''
+    </div>
+    '''
+
     
 if __name__ == '__main__':
     app.run(host='127.0.0.1', debug=True,port="5000")
