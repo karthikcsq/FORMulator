@@ -27,22 +27,35 @@ def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 def gen_frames():
+    input_video_path = 'FullDribble.mp4'
+    cap = cv2.VideoCapture(input_video_path)
     camera = cv2.VideoCapture(0)
     while True:
         with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
             while camera.isOpened():
                 ret, frame = camera.read()
+                ret2, frame2 = cap.read()
+
                 
                 # Recolor image to RGB
                 image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                image2 = cv2.cvtColor(frame2, cv2.COLOR_BGR2RGB)
+                
                 image.flags.writeable = False
+                image2.flags.writeable = False
+                
               
                 # Make detection
                 results = pose.process(image)
+                results2 = pose.process(image2)
+                
             
                 # Recolor back to BGR
                 image.flags.writeable = True
+                image2.flags.writeable = True
+                
                 image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+                image2 = cv2.cvtColor(image2, cv2.COLOR_RGB2BGR)
                 
                 # Extract landmarks
                 try:
@@ -57,6 +70,12 @@ def gen_frames():
                                         mp_drawing.DrawingSpec(color=(245,117,66), thickness=2, circle_radius=2), 
                                         mp_drawing.DrawingSpec(color=(245,66,230), thickness=2, circle_radius=2) 
                                          )
+                
+                mp_drawing.draw_landmarks(image, results2.pose_landmarks, mp_pose.POSE_CONNECTIONS,
+                                        mp_drawing.DrawingSpec(color=(66,117,245), thickness=5, circle_radius=2), 
+                                        mp_drawing.DrawingSpec(color=(66,230,245), thickness=5, circle_radius=2) 
+                                         )
+                
                 
                 if not ret:
                     break
