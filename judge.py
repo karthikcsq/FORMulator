@@ -123,8 +123,37 @@ def judge():
             print(parts[j] + ": " + ("open" if angleTwo[b][k] > 0 else "close") + " (" + str(msTwo[keyFramesTwo[b][k]]) + ")")
         b+=1
 
-    
+    for x in range(len(keyFramesOne)):
+        if len(keyFramesOne[x]) > 0 and len(keyFramesTwo[x]) > 0:
+            offset = float(msOne[keyFramesOne[x][0]]) - float(msTwo[keyFramesTwo[x][0]])
+            print("x: " + str(x))
+            break
+
+
+    b = 0
+    for j in parts:
+        for k in range(len(keyFramesOne[b])):
             
+            if len(keyFramesTwo[b]) < k or keyFramesTwo[b] != keyFramesOne[b]:
+                print("You missed the move: " + strOne + "!")
+                return
+            
+            timeOne = float(msOne[keyFramesOne[b][k]])
+            timeTwo = float(float(msTwo[keyFramesOne[b][k]]) + offset)
+            strOne = parts[j] + ": " + ("open" if angleOne[b][k] > 0 else "close")
+            strTwo = parts[j] + ": " + ("open" if angleTwo[b][k] > 0 else "close")
+            if (strOne != strTwo):
+                print("You did: " + strTwo + " instead of " + strOne)
+            elif (timeOne - timeTwo > 0.3):
+                print("You did: " + str(timeOne - timeTwo) + " ms earlier than supposed to!")
+                print(offset)
+                print(timeOne)
+                print(timeTwo)
+            elif (timeOne - timeTwo < -0.3):
+                print("You did: " + str(timeTwo - timeOne) + " ms later than supposed to!")
+        b+=1
+    
+    print("Congratulations! You've perfected the form!")
 
 
 
