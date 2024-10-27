@@ -1,12 +1,14 @@
+# abhi method for corrections
 import ast
 from math import *
 
+# cords 1 is original perfect dance
+# cords 2 is karthik perfect dance
 
 
-
-def judge():
-    msOne, coordsOne = readFile('coordsOne.txt')
-    msTwo, coordsTwo = readFile('coordsTwo.txt')
+def judge(modelFile, yourFile):
+    msOne, coordsOne = readFile(modelFile)
+    msTwo, coordsTwo = readFile(yourFile)
     # coordsOne and coordsTwo are lists of coordinates of body parts, where One is ideal and Two is user input
     # THESE LISTS SHOULD BE STORED AS [LWrist,RWrist,LElbow,RElbow,LShoulder,RShoulder,LHip,RHip,LKnee,RKnee,LAnkle,RAnkle]
 
@@ -15,8 +17,11 @@ def judge():
         3: "Right Elbow",
         4: "Left Shoulder",
         5: "Right Shoulder",
+        6: "Left Hip",
+        7: "Right Hip",
         8: "Left Knee",
         9: "Right Knee",
+        
     }
 
     leniency = {
@@ -24,6 +29,8 @@ def judge():
         3: [10,0.00001],
         4: [5,0.00001],
         5: [5,0.00001],
+        6: [1,0.00001],
+        7: [1,0.00001],
         8: [10,0.00001],
         9: [10,0.00001],
     }
@@ -61,9 +68,9 @@ def judge():
                         part_key_frames.append(i)
                         part_angle_one.append(curr - prevAngle)
                 
-                if delta is not None:
-                    prevDelta = delta
+                if prevDelta is not None:
                     acc = delta - prevDelta
+                    prevDelta = delta
                     
                 prevOpen = curr_state
 
@@ -75,13 +82,13 @@ def judge():
         angleOne.append(part_angle_one)
 
     b = 0
-    for j in parts:
-        for k in range(len(keyFramesOne[b])):
-            print(parts[j] + ": " + ("open" if angleOne[b][k] > 0 else "close") + " (" + str(msOne[keyFramesOne[b][k]]) + ")")
-        b+=1
+    # for j in parts:
+    #     # for k in range(len(keyFramesOne[b])):
+    #         # print(parts[j] + ": " + ("open" if angleOne[b][k] > 0 else "close") + " (" + str(msOne[keyFramesOne[b][k]]) + ")")
+    #     # b+=1
     
-    print("")
-    print("")
+    # print("")
+    # print("")
 
     for x in parts:
         part_key_frames = []
@@ -104,9 +111,9 @@ def judge():
                         part_key_frames.append(i)
                         part_angle_two.append(curr - prevAngle)
                 
-                if delta is not None:
-                    prevDelta = delta
+                if prevDelta is not None:
                     acc = delta - prevDelta
+                    prevDelta = delta
                     
                 prevOpen = curr_state
 
@@ -117,49 +124,52 @@ def judge():
         keyFramesTwo.append(part_key_frames)
         angleTwo.append(part_angle_two)
 
-    b = 0
-    for j in parts:
-        for k in range(len(keyFramesTwo[b])):
-            print(parts[j] + ": " + ("open" if angleTwo[b][k] > 0 else "close") + " (" + str(msTwo[keyFramesTwo[b][k]]) + ")")
-        b+=1
+    # b = 0
+    # for j in parts:
+    #     for k in range(len(keyFramesTwo[b])):
+    #         print(parts[j] + ": " + ("open" if angleTwo[b][k] > 0 else "close") + " (" + str(msTwo[keyFramesTwo[b][k]]) + ")")
+    #     b+=1
+
+    # Everything before is finiding key features acorss 2 videos and writing them down
 
     for x in range(len(keyFramesOne)):
         if len(keyFramesOne[x]) > 0 and len(keyFramesTwo[x]) > 0:
-            offset = float(msOne[keyFramesOne[x][0]]) - float(msTwo[keyFramesTwo[x][0]])
-            print("x: " + str(x))
+            offset = float(msTwo[keyFramesTwo[x][0]]) - float(msOne[keyFramesOne[x][0]]) 
+            # print("x: " + str(x))
             break
 
-
+    missed = False
     b = 0
     for j in parts:
+        strOne = None
         for k in range(len(keyFramesOne[b])):
-            
-            if len(keyFramesTwo[b]) < k or keyFramesTwo[b] != keyFramesOne[b]:
-                print("You missed the move: " + strOne + "!")
-                return
+            if (len(keyFramesTwo[b]) < k or keyFramesTwo[b] != keyFramesOne[b]) and strOne != None:
+                # print("You missed the move: " + strOne + "!")
+                missed = True
             
             timeOne = float(msOne[keyFramesOne[b][k]])
             timeTwo = float(float(msTwo[keyFramesOne[b][k]]) + offset)
-            strOne = parts[j] + ": " + ("open" if angleOne[b][k] > 0 else "close")
-            strTwo = parts[j] + ": " + ("open" if angleTwo[b][k] > 0 else "close")
+
+            if(b >= len(angleTwo) or  k >= len(angleTwo[b])):
+                strOne = parts[j] + " " + ("open" if angleOne[b][k] > 0 else "close")
+                print("missed " + str(strOne) + " at time: " + str(timeTwo - offset))
+                continue
+            else:
+                strOne = parts[j] + " " + ("open" if angleOne[b][k] > 0 else "close")
+                strTwo = parts[j] + " " + ("open" if angleTwo[b][k] > 0 else "close")
+            
+            
             if (strOne != strTwo):
                 print("You did: " + strTwo + " instead of " + strOne)
-            elif (timeOne - timeTwo > 0.3):
-                print("You did: " + str(timeOne - timeTwo) + " ms earlier than supposed to!")
-                print(offset)
-                print(timeOne)
-                print(timeTwo)
-            elif (timeOne - timeTwo < -0.3):
-                print("You did: " + str(timeTwo - timeOne) + " ms later than supposed to!")
+            elif (timeOne - (timeTwo - offset) > 0.05):
+                print("You did: " + str(strTwo) + " " + str(timeOne - (timeTwo - offset)) + " ms earlier than supposed to at " + str(timeTwo - offset))
+            elif (timeOne - (timeTwo - offset) < -0.05):
+                print("You did: " + str(strTwo) + " " + str( - (timeOne - (timeTwo - offset)) ) + " ms later than supposed to at " + str(timeTwo - offset))
         b+=1
     
-    print("Congratulations! You've perfected the form!")
+    if(not missed):
+        print("Congratulations! You've perfected the form!")
 
-
-
-
-
-    
 
 def calcAngle(pointOne, pointTwo, pointThree):
     # pointOne is wrist/foot.
@@ -194,4 +204,4 @@ def readFile(file):
                 parts[x-1].append(coords)
     return ms, parts
 
-judge()
+judge("abhiPipelineModel.txt", "abhiPipelineYour.txt")
