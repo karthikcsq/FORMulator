@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Video Display</title>
+</head>
+<body>
+    <h1>Uploaded Videos</h1>
+    {% for i in range(2) %}
+        <h2>Video {{ loop.index }}</h2>
+        <img src="{{ url_for('video_feed', video_id=loop.index0) }}" style="width: 50%;">
+    {% endfor %}
+    <br>
+    <a href="{{ url_for('upload_form') }}">Upload More Videos</a>
+</body>
+</html>
