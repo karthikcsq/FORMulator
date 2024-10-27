@@ -5,6 +5,8 @@ from skimage import transform
 from skimage.io import imread, imshow
 import cv2
 
+# -----------> HOMOGRAPHY ATTEMPT | IT FAILED <-------------
+
 monopoly = imread('monopoly.jpg')
 
 imshow(monopoly)
