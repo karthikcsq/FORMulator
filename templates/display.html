@@ -12,6 +12,8 @@
         <img src="{{ url_for('video_feed', video_id=loop.index0) }}" style="width: 50%;">
     {% endfor %}
     <br>
+    <a href="{{url_for('submitted')}}" >See Improvements</a>
+    <br>
     <a href="{{ url_for('upload_form') }}">Upload More Videos</a>
 </body>
 </html>

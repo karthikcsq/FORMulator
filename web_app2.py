@@ -328,8 +328,14 @@ def generate_frames(video_path):
                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
     
     app.app_context()
-    print(judge("abhiPipelineModel.txt", "abhiPipelineYour.txt"))
+    # yield judge("abhiPipelineModel.txt", "abhiPipelineYour.txt")
     # return render_template('submitted.html', paragraph=judge("abhiPipelineModel.txt", "abhiPipelineYour.txt"))
+    
+@app.route('/submitted')
+def submitted():
+    paragraph = judge("abhiPipelineModel.txt", "abhiPipelineYour.txt")
+    paragraph.replace("\n", "<br>")
+    return render_template('submitted.html', paragraph=paragraph)
 
 @app.route('/video_feed/<int:video_id>')
 def video_feed(video_id):
