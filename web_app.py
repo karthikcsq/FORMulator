@@ -7,7 +7,7 @@ import numpy as np
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 
-UPLOAD_FOLDER = 'uploads/'
+UPLOAD_FOLDER = './'
 ALLOWED_EXTENSIONS = {'mp4','mov'}
 
 app = Flask(__name__)
@@ -19,29 +19,33 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
            
 @app.route('/', methods=['GET', 'POST'])
-def index():
-    return render_template('index.html', upload=upload_file())
+def default():
+    return redirect(url_for('index', video_name='FullDribble.mp4'))
 
-# @app.route('/fileclick', methods=['GET', 'POST'])
-# def list_files():
-#     files = []
-#     for filename in os.listdir(app.config['UPLOAD_FOLDER']):
-#         path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-#         if os.path.isfile(path):
-#             files.append(filename)
-#     retstr = '<form action="/forward/" method="post">\n'
-#     for (i, filename) in enumerate(files):
-#         retstr += f'\t<button name="Btn-{filename}" type="submit">{filename}</button>\n'
-#     retstr += "</form>"
-#     return retstr
+@app.route('/<video_name>', methods=['GET', 'POST'])
+def index(video_name):
+    return render_template('index.html', videoname=video_name, upload=upload_file(), files=list_files())
 
-# @app.route('/forward/', methods=['GET', 'POST'])
-# def use_video():
-#     if request.method == 'POST':
-#         for key in request.form.keys():
-#             if key.startswith('Btn-'):
-#                 filename = os.path.join(app.config['UPLOAD_FOLDER'], key[4:])
-#                 return redirect(url_for('video_feed', video_name=filename))
+@app.route('/fileclick', methods=['GET', 'POST'])
+def list_files():
+    files = []
+    for filename in os.listdir(app.config['UPLOAD_FOLDER']):
+        path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        if os.path.isfile(path) and allowed_file(filename):
+            files.append(filename)
+    retstr = '<form action="/forward" method="post">\n'
+    for (i, filename) in enumerate(files):
+        retstr += f'\t<button name="Btn-{filename}" type="submit">{filename}</button>\n'
+    retstr += "</form>"
+    return retstr
+
+@app.route('/forward', methods=['GET', 'POST'])
+def use_video():
+    if request.method == 'POST':
+        for key in request.form.keys():
+            if key.startswith('Btn-'):
+                filename = os.path.join(app.config['UPLOAD_FOLDER'], key[4:])
+                return redirect(url_for('index', video_name=filename))
 
 @app.route('/video_feed/<video_name>', methods=['GET', 'POST'])
 def video_feed(video_name):
