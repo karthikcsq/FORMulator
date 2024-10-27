@@ -61,6 +61,8 @@ def gen_frames(video_name):
                 ret, frame = camera.read()
                 ret2, frame2 = cap.read()
 
+                if not ret2 or not ret:
+                    continue
                 
                 # Recolor image to RGB
                 image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)

@@ -1,15 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Stream</title>
-  </head>
-  <body>
-  <img src="{{ url_for('video_feed', video_name=videoname) }}" width="925" height="520">
-  {% autoescape off %}
-  {{ upload }}
-  {% endautoescape %}
-  {% autoescape off %}
-  {{ files }}
-  {% endautoescape %}
+
+    <!-- Tailwind CSS 3.4.13 CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Include Three.js and Vanta.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/tengbao/vanta@latest/dist/vanta.fog.min.js"></script>
+
+    <style>
+        /* Ensure that the body takes up the full height of the viewport */
+        body, html {
+            margin: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+
+    <nav class="bg-gray-800 bg-opacity-75 shadow-md fixed w-full z-10">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold">MyWebsite</div>
+            <div class="hidden md:flex space-x-4">
+                <a href="#home" class="hover:text-gray-300">Home</a>
+                <a href="#about" class="hover:text-gray-300">About</a>
+                <a href="#services" class="hover:text-gray-300">Services</a>
+                <a href="#contact" class="hover:text-gray-300">Contact</a>
+            </div>
+            <div class="md:hidden flex items-center">
+                <button id="navbar-toggle" class="text-gray-300 hover:text-gray-400 focus:outline-none">
+                    <!-- Hamburger Icon -->
+                    <svg width="8px" height="8px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 18L20 18" stroke="#000000" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M4 12L20 12" stroke="#000000" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M4 6L20 6" stroke="#000000" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" class="md:hidden">
+            <a href="#home" class="block px-4 py-2 hover:bg-gray-700">Home</a>
+            <a href="#about" class="block px-4 py-2 hover:bg-gray-700">About</a>
+            <a href="#services" class="block px-4 py-2 hover:bg-gray-700">Services</a>
+            <a href="#contact" class="block px-4 py-2 hover:bg-gray-700">Contact</a>
+        </div>
+    </nav>
+
+
+    <!-- Full-screen Vanta.js Fog animation -->
+    <div class="w-full h-screen relative">
+        <!-- Text content over the background, using Tailwind CSS classes -->
+        <div class="absolute inset-0 flex items-center justify-center z-10 text-black">
+            <div class="text-center">
+                <h1 class="text-6xl font-bold mb-4">Welcome to My Flask Homepage!</h1>
+                <p class="text-lg">This is a full-screen background with Vanta.js Fog effect!</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+
+    <img src="{{ url_for('video_feed', video_name=videoname) }}" width="925" height="520">
+    {% autoescape off %}
+    {{ upload }}
+    {% endautoescape %}
+    {% autoescape off %}
+    {{ files }}
+    {% endautoescape %}
   </body>
 </html>
