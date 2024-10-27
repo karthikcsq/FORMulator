@@ -6,6 +6,7 @@ import mediapipe as mp
 import numpy as np
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
+from judge import readFile
 
 # method for corrections
 import ast
@@ -22,8 +23,8 @@ def judge(modelFile, yourFile):
         3: "Right Elbow",
         4: "Left Shoulder",
         5: "Right Shoulder",
-        # 6: "Left Hip",
-        # 7: "Right Hip",
+        6: "Left Hip",
+        7: "Right Hip",
         8: "Left Knee",
         9: "Right Knee",
         
@@ -34,8 +35,8 @@ def judge(modelFile, yourFile):
         3: [10,0.00001],
         4: [5,0.00001],
         5: [5,0.00001],
-        # 6: [1,0.00001],
-        # 7: [1,0.00001],
+        6: [1,0.00001],
+        7: [1,0.00001],
         8: [10,0.00001],
         9: [10,0.00001],
     }
@@ -134,14 +135,15 @@ def judge(modelFile, yourFile):
     for j in parts:
         strOne = None
         for k in range(len(keyFramesOne[b])):
-            if (len(keyFramesTwo[b]) < k or keyFramesTwo[b] != keyFramesOne[b]) and strOne != None:                missed = True
+            if (len(keyFramesTwo[b]) < k or keyFramesTwo[b] != keyFramesOne[b]) and strOne != None:                
+                missed = True
             
             timeOne = float(msOne[keyFramesOne[b][k]])
             timeTwo = float(float(msTwo[keyFramesOne[b][k]]) + offset)
 
             if(b >= len(angleTwo) or  k >= len(angleTwo[b])):
                 strOne = parts[j] + " " + ("open" if angleOne[b][k] > 0 else "close")
-                finalString += "missed " + str(strOne) + " at time: " + str(timeTwo - offset) + "\n"
+                finalString += "missed " + str(strOne) + " at time: " + str(timeTwo - offset) + "s -- "
                 continue
             else:
                 strOne = parts[j] + " " + ("open" if angleOne[b][k] > 0 else "close")
@@ -149,15 +151,15 @@ def judge(modelFile, yourFile):
             
             
             if (strOne != strTwo):
-                finalString += "You did: " + strTwo + " instead of " + strOne + "\n"
+                finalString += "You did: " + strTwo + " instead of " + strOne + " -- "
             elif (timeOne - (timeTwo - offset) > 0.05):
-                finalString += "You did: " + str(strTwo) + " " + str(timeOne - (timeTwo - offset)) + " ms earlier than supposed to at " + str(timeTwo - offset) + "\n"
+                finalString += "You did: " + str(strTwo) + " " + str(timeOne - (timeTwo - offset)) + " ms earlier than supposed to at " + str(timeTwo - offset) + "s -- "
             elif (timeOne - (timeTwo - offset) < -0.05):
-                finalString += "You did: " + str(strTwo) + " " + str( - (timeOne - (timeTwo - offset)) ) + " ms later than supposed to at " + str(timeTwo - offset) + "\n"
+                finalString += "You did: " + str(strTwo) + " " + str( - (timeOne - (timeTwo - offset)) ) + " ms later than supposed to at " + str(timeTwo - offset) + "s -- "
         b+=1
     
     if(not missed):
-        finalString += "Congratulations! You've perfected the form!" + "\n"
+        finalString += "Congratulations! You've perfected the form!" + " -- "
     
     return finalString
 

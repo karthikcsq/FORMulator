@@ -110,8 +110,8 @@ def gen_frames(video_name):
                 
                 # Render detections
                 mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
-                                        mp_drawing.DrawingSpec(color=(245,117,66), thickness=2, circle_radius=2), 
-                                        mp_drawing.DrawingSpec(color=(245,66,230), thickness=2, circle_radius=2) 
+                                        mp_drawing.DrawingSpec(color=(245,117,66), thickness=4, circle_radius=2), 
+                                        mp_drawing.DrawingSpec(color=(245,66,230), thickness=4, circle_radius=2) 
                                          )
                 
                 mp_drawing.draw_landmarks(image, results2.pose_landmarks, mp_pose.POSE_CONNECTIONS,
