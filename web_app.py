@@ -18,16 +18,37 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
            
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    return render_template('index.html', upload=upload_file())
 
-@app.route('/video_feed')
-def video_feed():
-    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+# @app.route('/fileclick', methods=['GET', 'POST'])
+# def list_files():
+#     files = []
+#     for filename in os.listdir(app.config['UPLOAD_FOLDER']):
+#         path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+#         if os.path.isfile(path):
+#             files.append(filename)
+#     retstr = '<form action="/forward/" method="post">\n'
+#     for (i, filename) in enumerate(files):
+#         retstr += f'\t<button name="Btn-{filename}" type="submit">{filename}</button>\n'
+#     retstr += "</form>"
+#     return retstr
 
-def gen_frames():
-    input_video_path = 'FullDribble.mp4'
+# @app.route('/forward/', methods=['GET', 'POST'])
+# def use_video():
+#     if request.method == 'POST':
+#         for key in request.form.keys():
+#             if key.startswith('Btn-'):
+#                 filename = os.path.join(app.config['UPLOAD_FOLDER'], key[4:])
+#                 return redirect(url_for('video_feed', video_name=filename))
+
+@app.route('/video_feed/<video_name>', methods=['GET', 'POST'])
+def video_feed(video_name):
+    return Response(gen_frames(video_name), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+def gen_frames(video_name):
+    input_video_path = video_name
     cap = cv2.VideoCapture(input_video_path)
     camera = cv2.VideoCapture(0)
     while True:

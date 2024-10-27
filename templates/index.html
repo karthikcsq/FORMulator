@@ -4,7 +4,9 @@
     <title>Video Stream</title>
   </head>
   <body>
-  <img src="{{ url_for('video_feed') }}" width="840" height="520">
-  
+  <img src="{{ url_for('video_feed', video_name='FullDribble.mp4') }}" width="840" height="520">
+  {% autoescape off %}
+  {{ upload }}
+  {% endautoescape %}
   </body>
 </html>
