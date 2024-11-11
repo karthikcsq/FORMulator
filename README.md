@@ -8,3 +8,6 @@ Simply head to our website (as of now, it is a local host, but it will be upload
 
 ## License
 This project is licensed under the MIT License - see the HELLOWORLD2024/LICENSE file for details.
+
+## Devpost
+https://devpost.com/software/formulator
