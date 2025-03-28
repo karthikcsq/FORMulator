@@ -8,3 +8,6 @@ You can evaluate your movements in real-time against a video input at `web_app.p
 
 ## License
 This project is licensed under the MIT License - see the HELLOWORLD2024/LICENSE file for details.
+
+## Devpost
+https://devpost.com/software/formulator
